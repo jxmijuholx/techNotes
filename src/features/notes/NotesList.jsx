@@ -1,4 +1,4 @@
-import Note from "./note"
+import Note from "./Note"
 import { useGetNotesQuery } from "./notesApiSlice"
 
 const NotesList = () => {
@@ -8,7 +8,11 @@ const NotesList = () => {
         isSuccess,
         isError,
         error
-    } = useGetNotesQuery()
+    } = useGetNotesQuery(undefined, {
+        pollingInterval: 15000,
+        refetchOnFocus: true,
+        refetchOnMountOrArgChange: true
+    })
 
     let content
 
@@ -46,4 +50,4 @@ const NotesList = () => {
 
     return content
 }
-export default NotesListß
+export default NotesList

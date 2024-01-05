@@ -17,7 +17,6 @@ export const notesApiSlice = apiSlice.injectEndpoints({
             validateStatus: (response, result) => {
                 return response.status === 200 && !result.isError
             },
-            keepUnusedDataFor: 5,
             transformResponse: responseData => {
                 const loadedNotes = responseData.map(note => {
                     note.id = note._id
@@ -34,11 +33,37 @@ export const notesApiSlice = apiSlice.injectEndpoints({
                 } else return [{ type: 'Note', id: 'LIST' }]
             }
         }),
+        addNote: builder.mutation({
+            query: note => ({
+                url: '/notes',
+                method: 'POST',
+                body: note
+            }),
+            invalidatesTags: [{ type: 'Note', id: 'LIST' }]
+        }),
+        updateNote: builder.mutation({
+            query: note => ({
+                url: `/notes/${note.id}`,
+                method: 'PUT',
+                body: note
+            }),
+            invalidatesTags: (result, error, arg) => [{ type: 'Note', id: arg.id }]
+        }),
+        deleteNote: builder.mutation({
+            query: id => ({
+                url: `/notes/${id}`,
+                method: 'DELETE'
+            }),
+            invalidatesTags: (result, error, arg) => [{ type: 'Note', id: arg }]
+        }),
     }),
 })
 
 export const {
     useGetNotesQuery,
+    useAddNoteMutation,
+    useUpdateNoteMutation,
+    useDeleteNoteMutation
 } = notesApiSlice
 
 // returns the query result object
